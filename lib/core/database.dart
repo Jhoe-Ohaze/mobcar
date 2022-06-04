@@ -19,6 +19,10 @@ class Database {
       throw Exception('Error on requesting data');
     }
     List dynamicList = json.decode(response.body);
-    
+    List<Map<String, dynamic>> mapList =
+        List<Map<String, dynamic>>.generate(dynamicList.length, (index) {
+      return dynamicList.elementAt(index);
+    });
+    manufacturersList = mapList;
   }
 }

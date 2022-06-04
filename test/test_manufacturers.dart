@@ -10,7 +10,6 @@ void main(List<String> args) {
 
   test('Should return a list of Manufacturers', (() async {
     await Database.setManufacturers();
-    print(Database.manufacturersList);
     expect(Database.manufacturersList.isNotEmpty, true);
   }));
 }
