@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:mobcar/core/car.dart';
+import 'package:mobcar/widgets/list%20page/car_tile.dart';
 
 class CarList extends StatelessWidget {
-  final List<Car> list;
-  const CarList({required this.list, Key? key}) : super(key: key);
+  final Stream<List<Car>?> stream;
+  final Function() onTap;
+  const CarList({required this.stream, required this.onTap, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 60),
-      itemCount: list.length,
-      separatorBuilder: (context, index) {
-        return const Divider();
-      },
-      itemBuilder: (context, index) {
-        return Container();
+    return StreamBuilder<List<Car>?>(
+      stream: stream,
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? ListView.separated(
+                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 10);
+                },
+                itemBuilder: (context, index) {
+                  return CarTile(
+                    car: snapshot.data!.elementAt(index),
+                    onTap: onTap,
+                  );
+                },
+              )
+            : const Center(
+                child: Text('Não há carros cadastrados'),
+              );
       },
     );
   }

@@ -60,6 +60,7 @@ class Database {
   }
 
   static Future<void> saveData({required Car car, Uint8List? image}) async {
+    print('Saving Data');
     Map<String, dynamic> data = {
       'manufacturer': {
         'code': car.manufacturer.code,
@@ -82,6 +83,7 @@ class Database {
     }
 
     FirebaseFirestore.instance.collection('Cars').add(data);
+    print('Saved Data');
   }
 
   static Future<void> updateData({
@@ -125,6 +127,9 @@ class Database {
       data['image_url'] = await _uploadImage(newImage!);
     }
 
-    await FirebaseFirestore.instance.collection('Cars').doc(documentID).update(data);
+    await FirebaseFirestore.instance
+        .collection('Cars')
+        .doc(documentID)
+        .update(data);
   }
 }

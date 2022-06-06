@@ -1,14 +1,17 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mobcar/core/car.dart';
 import 'package:mobcar/core/database.dart';
 import 'package:mobcar/core/item_page_bloc.dart';
+import 'package:mobcar/core/list_page_bloc.dart';
 import 'package:mobcar/widgets/item page/dropdown_manufacturers.dart';
 import 'package:mobcar/widgets/item page/dropdown_models.dart';
 import 'package:mobcar/widgets/item page/dropdown_years.dart';
 import 'package:mobcar/widgets/item page/textfield_fipe.dart';
 import 'package:mobcar/widgets/item%20page/image_frame.dart';
+import 'package:mobcar/widgets/item%20page/submit_button.dart';
 
 class CarItemPage extends StatefulWidget {
   final bool isEdit;
@@ -36,12 +39,17 @@ class _CarItemPageState extends State<CarItemPage> {
   final _yearFieldKey = GlobalKey<FormFieldState>();
   final _fipeController = TextEditingController();
 
+  Uint8List? currentImage;
+
   @override
   void initState() {
     super.initState();
-    if (!widget.isEdit) {
-      bloc.getManufacturers();
-    } else {
+    bloc.imageStream.listen((newImage) {
+      currentImage = newImage;
+    });
+
+    bloc.getManufacturers();
+    if (widget.isEdit) {
       bloc.getManufacturers();
       _manufacturerFieldKey.currentState!.setValue(widget.oldCar!.manufacturer);
       bloc.getModels(widget.oldCar!.manufacturer);
@@ -72,7 +80,6 @@ class _CarItemPageState extends State<CarItemPage> {
             TextButton(
               child: const Text('Confirmar'),
               onPressed: () async {
-                Navigator.of(firstContext).pop();
                 showDialog(
                   context: context,
                   builder: (secondContext) {
@@ -99,17 +106,19 @@ class _CarItemPageState extends State<CarItemPage> {
                     oldData: widget.oldCar!,
                     newData: newCar,
                     oldImage: widget.oldImage,
-                    newImage: await bloc.imageStream.last,
+                    newImage: currentImage,
                     documentID: widget.documentID!,
                   );
                 } else {
                   await Database.saveData(
+                    image: currentImage,
                     car: newCar,
-                    image: await bloc.imageStream.last,
                   );
                 }
 
                 await Future.delayed(const Duration(seconds: 1));
+                ListPageBloc().getCarList();
+                Navigator.of(firstContext).pop();
                 Navigator.of(loadingContext).pop();
                 Navigator.of(context).pop();
               },
@@ -164,17 +173,12 @@ class _CarItemPageState extends State<CarItemPage> {
                   onChanged: bloc.getFipe,
                 ),
                 TextFieldFipe(
-                    stream: bloc.fipeStream, controller: _fipeController),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Container(
-                    height: 60,
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Salvar',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
+                  stream: bloc.fipeStream,
+                  controller: _fipeController,
+                ),
+                SubmitButton(
+                  stream: bloc.submitStream,
+                  onPressed: submit,
                 ),
               ],
             ),
