@@ -5,8 +5,10 @@ Neste App, você pode facilmente cadastrar novos carros, editar e excluir os cad
 
 ## Aviso e download
 
+Usuário: admin  Senha: 123456
+
 Atenção, este app requer uma boa conexão com a internet.
 
 Uma fraca conexão de internet pode gerar muita demora e erros inesperados.
 
-Link para o download do APK: 
+Link para o download do APK: https://github.com/Jhoe-Ohaze/mobcar/releases/download/Release/mobcar_1-0.apk
