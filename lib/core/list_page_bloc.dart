@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:mobcar/core/car.dart';
 import 'package:mobcar/core/database.dart';
 

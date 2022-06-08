@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobcar/pages/splash_page.dart';
+import 'package:mobcar/assets/custom_colors.dart';
+import 'package:mobcar/pages/login_page.dart';
 
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,13 +19,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'MOBCAR',
       theme: ThemeData(
+        primarySwatch: CustomColors.primaryBlack,
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
         ),
+        appBarTheme: const AppBarTheme(
+          actionsIconTheme: IconThemeData(color: Colors.blue),
+          iconTheme: IconThemeData(color: Colors.blue),
+          toolbarTextStyle: TextStyle(color: Colors.blue),
+        ),
       ),
-      home: const SplashPage(),
+      home: const LoginPage(),
     );
   }
 }

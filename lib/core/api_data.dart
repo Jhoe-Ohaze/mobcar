@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobcar/core/car.dart';
 
 class APIData {
   static const String _baseURL =
       'https://parallelum.com.br/fipe/api/v1/carros/marcas';
 
-  static List<Manufacturer>? manufacturersList;
-  static List<Model>? modelList;
-  static List<Year>? yearList;
+  static List<Map<String, dynamic>>? manufacturersList;
+  static List<Map<String, dynamic>>? modelList;
+  static List<Map<String, dynamic>>? yearList;
   static String? fipe;
 
   static Future<http.Response> requestManufacturers() {
@@ -44,22 +43,16 @@ class APIData {
 
     List dynamicList = json.decode(response.body);
 
-    manufacturersList = List<Manufacturer>.generate(
+    manufacturersList = List<Map<String, dynamic>>.generate(
       dynamicList.length,
-      (index) {
-        Map<String, dynamic> map = dynamicList.elementAt(index);
-        final manufacturer = Manufacturer(
-          name: map['nome'],
-          code: map['codigo'],
-        );
-        return manufacturer;
-      },
+      (index) => dynamicList.elementAt(index),
     );
   }
 
-  static Future<void> setModels({required Manufacturer manufacturer}) async {
+  static Future<void> setModels(
+      {required Map<String, dynamic> manufacturer}) async {
     http.Response response =
-        await requestModels(manufacturer: manufacturer.code).timeout(
+        await requestModels(manufacturer: manufacturer['codigo'].toString()).timeout(
       const Duration(seconds: 15),
       onTimeout: () => throw Exception('Request Timed Out'),
     );
@@ -70,23 +63,18 @@ class APIData {
 
     List dynamicList = json.decode(response.body)['modelos'];
 
-    modelList = List<Model>.generate(
+    modelList = List<Map<String, dynamic>>.generate(
       dynamicList.length,
-      (index) {
-        final map = dynamicList.elementAt(index);
-        final model = Model(
-          manufacturer: manufacturer,
-          name: map['nome'],
-          code: map['codigo'].toString(),
-        );
-        return model;
-      },
+      (index) => dynamicList.elementAt(index),
     );
   }
 
-  static Future<void> setYear({required Model model}) async {
+  static Future<void> setYear({
+    required Map<String, dynamic> manufacturer,
+    required Map<String, dynamic> model,
+  }) async {
     http.Response response = await requestYears(
-            manufacturer: model.manufacturer.code, model: model.code)
+            manufacturer: manufacturer['codigo'].toString(), model: model['codigo'].toString())
         .timeout(
       const Duration(seconds: 15),
       onTimeout: () => throw Exception('Request Timed Out'),
@@ -97,27 +85,22 @@ class APIData {
     }
 
     List dynamicList = json.decode(response.body);
-    yearList = List<Year>.generate(
+    yearList = List<Map<String, dynamic>>.generate(
       dynamicList.length,
-      (index) {
-        Map<String, dynamic> map = dynamicList.elementAt(index);
-        final year = Year(
-          manufacturer: model.manufacturer,
-          model: model,
-          name: map['nome'],
-          code: map['codigo'],
-        );
-        return year;
-      },
+      (index) => dynamicList.elementAt(index),
     );
   }
 
-  static Future<void> setFIPE({required Year year}) async {
+  static Future<void> setFIPE({
+    required Map<String, dynamic> manufacturer,
+    required Map<String, dynamic> model,
+    required Map<String, dynamic> year,
+  }) async {
     http.Response response = await requestFIPE(
-            manufacturer: year.manufacturer.code,
-            model: year.model.code,
-            year: year.code)
-        .timeout(
+      manufacturer: manufacturer['codigo'].toString(),
+      model: model['codigo'].toString(),
+      year: year['codigo'].toString(),
+    ).timeout(
       const Duration(seconds: 15),
       onTimeout: () => throw Exception('Request Timed Out'),
     );

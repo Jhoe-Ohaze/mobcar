@@ -15,9 +15,9 @@ class SubmitButton extends StatelessWidget {
     return StreamBuilder<bool>(
       stream: stream,
       builder: (context, snapshot) {
-        bool hasData = snapshot.data != null;
+        bool canSubmit = snapshot.data ?? false;
         return ElevatedButton(
-          onPressed: hasData ? onPressed : null,
+          onPressed: canSubmit ? onPressed : null,
           child: Container(
             height: 60,
             alignment: Alignment.center,

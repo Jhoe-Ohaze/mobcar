@@ -1,28 +1,21 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mobcar/core/car.dart';
-import 'package:mobcar/core/database.dart';
 import 'package:mobcar/core/item_page_bloc.dart';
-import 'package:mobcar/core/list_page_bloc.dart';
-import 'package:mobcar/widgets/item page/dropdown_manufacturers.dart';
-import 'package:mobcar/widgets/item page/dropdown_models.dart';
-import 'package:mobcar/widgets/item page/dropdown_years.dart';
+import 'package:mobcar/widgets/item%20page/dropdown_field.dart';
 import 'package:mobcar/widgets/item page/textfield_fipe.dart';
 import 'package:mobcar/widgets/item%20page/image_frame.dart';
 import 'package:mobcar/widgets/item%20page/submit_button.dart';
 
 class CarItemPage extends StatefulWidget {
   final bool isEdit;
-  final Uint8List? oldImage;
   final Car? oldCar;
   final String? documentID;
 
   const CarItemPage({
     required this.isEdit,
     this.oldCar,
-    this.oldImage,
     this.documentID,
     Key? key,
   }) : super(key: key);
@@ -39,28 +32,39 @@ class _CarItemPageState extends State<CarItemPage> {
   final _yearFieldKey = GlobalKey<FormFieldState>();
   final _fipeController = TextEditingController();
 
-  Uint8List? currentImage;
+  Uint8List? oldImage;
 
   @override
   void initState() {
     super.initState();
-    bloc.imageStream.listen((newImage) {
-      currentImage = newImage;
-    });
-
     bloc.getManufacturers();
-    if (widget.isEdit) {
-      bloc.getManufacturers();
-      _manufacturerFieldKey.currentState!.setValue(widget.oldCar!.manufacturer);
-      bloc.getModels(widget.oldCar!.manufacturer);
-      _modelFieldKey.currentState!.setValue(widget.oldCar!.model);
-      bloc.getYears(widget.oldCar!.model);
-      _yearFieldKey.currentState!.setValue(widget.oldCar!.year);
-      _fipeController.text = widget.oldCar!.fipe;
-      if (widget.oldImage != null) {
-        bloc.imageSink.add(widget.oldImage);
-      }
-    }
+  }
+
+  void initFields() async {
+    dynamic loadingContext;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        loadingContext = dialogContext;
+        return AlertDialog(
+          title: const Text(
+            'Carregando Dados',
+            style: TextStyle(color: Colors.blue),
+            textAlign: TextAlign.center,
+          ),
+          contentPadding: const EdgeInsets.all(50),
+          content: Container(
+            height: MediaQuery.of(context).size.width * 0.3,
+            alignment: Alignment.center,
+            child: const CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+    await bloc.initEditionFields(widget.oldCar!);
+
+    Navigator.of(loadingContext).pop();
   }
 
   void submit() async {
@@ -80,6 +84,7 @@ class _CarItemPageState extends State<CarItemPage> {
             TextButton(
               child: const Text('Confirmar'),
               onPressed: () async {
+                Navigator.of(firstContext).pop();
                 showDialog(
                   context: context,
                   builder: (secondContext) {
@@ -94,31 +99,13 @@ class _CarItemPageState extends State<CarItemPage> {
                   },
                 );
 
-                Car newCar = Car(
-                  manufacturer: _manufacturerFieldKey.currentState!.value,
-                  model: _modelFieldKey.currentState!.value,
-                  year: _yearFieldKey.currentState!.value,
-                  fipe: _fipeController.text,
-                );
-
                 if (widget.isEdit) {
-                  await Database.updateData(
-                    oldData: widget.oldCar!,
-                    newData: newCar,
-                    oldImage: widget.oldImage,
-                    newImage: currentImage,
-                    documentID: widget.documentID!,
-                  );
+                  await bloc.updateData(widget.oldCar!, widget.documentID!);
                 } else {
-                  await Database.saveData(
-                    image: currentImage,
-                    car: newCar,
-                  );
+                  await bloc.saveData();
                 }
 
-                await Future.delayed(const Duration(seconds: 1));
-                ListPageBloc().getCarList();
-                Navigator.of(firstContext).pop();
+                await Future.delayed(const Duration(seconds: 3));
                 Navigator.of(loadingContext).pop();
                 Navigator.of(context).pop();
               },
@@ -132,6 +119,12 @@ class _CarItemPageState extends State<CarItemPage> {
   @override
   Widget build(BuildContext context) {
     final String title = widget.isEdit ? 'Editar Carro' : 'Adicionar Carro';
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (widget.isEdit) {
+        initFields();
+      }
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -147,33 +140,52 @@ class _CarItemPageState extends State<CarItemPage> {
               clipBehavior: Clip.hardEdge,
               runSpacing: 10,
               children: [
-                ImageFrame(stream: bloc.imageStream, onTap: bloc.getImage),
-                DropdownManufacturers(
-                  stream: bloc.manufacturersStream,
+                ImageFrame(
+                    stream: bloc.imageBehavior.stream, onTap: bloc.getImage),
+                DropdownField(
+                  fieldName: 'Fabricante',
+                  listStream: bloc.listManufacturerBehavior.stream,
+                  itemStream: bloc.manufacturerBehavior.stream,
                   buttonKey: _manufacturerFieldKey,
-                  onChanged: (manufacturer) {
+                  onChanged: (manufacturer) async {
                     _modelFieldKey.currentState?.reset();
                     _yearFieldKey.currentState?.reset();
                     _fipeController.clear();
-                    bloc.getModels(manufacturer);
+                    bloc.manufacturerSink.add(manufacturer);
+                    bloc.getModels(manufacturer: manufacturer!);
                   },
                 ),
-                DropdownModels(
-                  stream: bloc.modelsStream,
+                DropdownField(
+                  fieldName: 'Modelo',
+                  listStream: bloc.listModelBehavior.stream,
+                  itemStream: bloc.modelBehavior.stream,
                   buttonKey: _modelFieldKey,
-                  onChanged: (model) {
+                  onChanged: (model) async {
                     _yearFieldKey.currentState?.reset();
                     _fipeController.clear();
-                    bloc.getYears(model);
+                    bloc.modelSink.add(model);
+                    bloc.getYears(
+                      manufacturer: bloc.manufacturerBehavior.value!,
+                      model: model!,
+                    );
                   },
                 ),
-                DropdownYears(
-                  stream: bloc.yearsStream,
+                DropdownField(
+                  fieldName: 'Ano',
+                  listStream: bloc.listYearBehavior.stream,
+                  itemStream: bloc.yearBehavior.stream,
                   buttonKey: _yearFieldKey,
-                  onChanged: bloc.getFipe,
+                  onChanged: (year) async {
+                    bloc.yearSink.add(year);
+                    bloc.getFipe(
+                      manufacturer: bloc.manufacturer!,
+                      model: bloc.model!,
+                      year: year!,
+                    );
+                  },
                 ),
                 TextFieldFipe(
-                  stream: bloc.fipeStream,
+                  stream: bloc.fipeBehavior.stream,
                   controller: _fipeController,
                 ),
                 SubmitButton(

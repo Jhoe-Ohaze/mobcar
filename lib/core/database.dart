@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mobcar/core/car.dart';
 
 class Database {
-  static List<Car> carList = [];
+  static List<Car>? carList;
 
   static Future<String> _uploadImage(Uint8List image) async {
     TaskSnapshot task = await FirebaseStorage.instance
@@ -30,25 +30,11 @@ class Database {
     List<Car> receivedList = List<Car>.generate(docList.length, (index) {
       DocumentSnapshot<Map<String, dynamic>> doc = docList.elementAt(index);
       Map<String, dynamic> data = doc.data()!;
-      final manufacturer = Manufacturer(
-        name: data['manufacturer']['name'],
-        code: data['manufacturer']['code'],
-      );
-      final model = Model(
-        name: data['model']['name'],
-        code: data['model']['code'],
-        manufacturer: manufacturer,
-      );
-      final year = Year(
-        name: data['year']['name'],
-        code: data['year']['code'],
-        manufacturer: manufacturer,
-        model: model,
-      );
+
       Car car = Car(
-        manufacturer: manufacturer,
-        model: model,
-        year: year,
+        manufacturer: data['manufacturer'],
+        model: data['model'],
+        year: data['year'],
         fipe: data['fipe'],
         id: doc.id,
       );
@@ -60,20 +46,10 @@ class Database {
   }
 
   static Future<void> saveData({required Car car, Uint8List? image}) async {
-    print('Saving Data');
     Map<String, dynamic> data = {
-      'manufacturer': {
-        'code': car.manufacturer.code,
-        'name': car.manufacturer.name,
-      },
-      'model': {
-        'code': car.model.code,
-        'name': car.model.name,
-      },
-      'year': {
-        'code': car.year.code,
-        'name': car.year.name,
-      },
+      'manufacturer': car.manufacturer,
+      'model': car.model,
+      'year': car.year,
       'fipe': car.fipe,
       'added_on': DateTime.now().toString(),
     };
@@ -83,7 +59,6 @@ class Database {
     }
 
     FirebaseFirestore.instance.collection('Cars').add(data);
-    print('Saved Data');
   }
 
   static Future<void> updateData({
@@ -96,31 +71,22 @@ class Database {
     Map<String, dynamic> data = {};
 
     if (oldData.manufacturer != newData.manufacturer) {
-      data['manufacturer'] = {
-        'name': newData.manufacturer.name,
-        'code': newData.manufacturer.code,
-      };
+      data['manufacturer'] = newData.manufacturer;
     }
 
     if (oldData.model != newData.model) {
-      data['model'] = {
-        'name': newData.model.name,
-        'code': newData.model.code,
-      };
+      data['model'] = newData.model;
     }
 
     if (oldData.year != newData.year) {
-      data['year'] = {
-        'name': newData.year.name,
-        'code': newData.year.code,
-      };
+      data['year'] = newData.year;
     }
 
     if (oldData.fipe != newData.fipe) {
       data['fipe'] = newData.fipe;
     }
 
-    if (oldImage != newImage) {
+    if (!const ListEquality().equals(oldImage, newImage)) {
       if (oldData.imageURL != null) {
         await FirebaseStorage.instance.refFromURL(oldData.imageURL!).delete();
       }
@@ -131,5 +97,12 @@ class Database {
         .collection('Cars')
         .doc(documentID)
         .update(data);
+  }
+
+  static Future<void> deleteData({required Car car}) async {
+    if (car.imageURL != null) {
+      await FirebaseStorage.instance.refFromURL(car.imageURL!).delete();
+    }
+    await FirebaseFirestore.instance.collection('Cars').doc(car.id).delete();
   }
 }
