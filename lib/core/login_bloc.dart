@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mobcar/core/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
@@ -44,18 +43,13 @@ class LoginBloc with LoginValidator {
 
   //Realiza o login
   void submit() {
-    final String email = _emailBehavior.value + '@example.com';
+    final String email = '${_emailBehavior.value}@example.com';
     final String password = _passwordBehavior.value;
 
     _stateBehavior.add(LoginState.LOADING);
 
     FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password)
-        .catchError(
-      (e) {
-        _stateBehavior.add(LoginState.FAIL);
-      },
-    );
+        .signInWithEmailAndPassword(email: email, password: password);
   }
 
   void dispose() {

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class LoginValidator {
+mixin LoginValidator {
   final validateUser = StreamTransformer<String, String>.fromHandlers(
     handleData: (user, sink) {
       if (user.length > 3) {

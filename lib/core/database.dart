@@ -2,7 +2,8 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mobcar/core/car.dart';
+
+import 'car.dart';
 
 class Database {
   static List<Car>? carList;
@@ -11,9 +12,8 @@ class Database {
     TaskSnapshot task = await FirebaseStorage.instance
         .ref()
         .child('Images')
-        .child(DateTime.now().millisecondsSinceEpoch.toRadixString(36) + '.jpg')
-        .putData(image, SettableMetadata(contentType: 'image/jpeg'))
-        .whenComplete(() => null);
+        .child('${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}.jpg')
+        .putData(image, SettableMetadata(contentType: 'image/jpeg'));
 
     String imageURL = await task.ref.getDownloadURL();
     return imageURL;

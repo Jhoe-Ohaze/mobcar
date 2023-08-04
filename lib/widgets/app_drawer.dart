@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobcar/pages/login_page.dart';
+
+import '../pages/login_page.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -40,19 +41,20 @@ class AppDrawer extends StatelessWidget {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginPage()));
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
             },
           ),
           Divider(
             thickness: 1,
             color: Colors.grey.shade700,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             child: Wrap(
               alignment: WrapAlignment.start,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: const [
+              children: [
                 Text(
                   'Ⓒ',
                   style: TextStyle(

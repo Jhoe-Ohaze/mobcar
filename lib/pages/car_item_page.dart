@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:mobcar/core/car.dart';
-import 'package:mobcar/core/item_page_bloc.dart';
-import 'package:mobcar/widgets/item%20page/dropdown_field.dart';
-import 'package:mobcar/widgets/item page/textfield_fipe.dart';
-import 'package:mobcar/widgets/item%20page/image_frame.dart';
-import 'package:mobcar/widgets/item%20page/submit_button.dart';
+
+import '../core/car.dart';
+import '../core/item_page_bloc.dart';
+import '../widgets/item page/textfield_fipe.dart';
+import '../widgets/item%20page/dropdown_field.dart';
+import '../widgets/item%20page/image_frame.dart';
+import '../widgets/item%20page/submit_button.dart';
 
 class CarItemPage extends StatefulWidget {
   final bool isEdit;
@@ -120,7 +121,7 @@ class _CarItemPageState extends State<CarItemPage> {
   Widget build(BuildContext context) {
     final String title = widget.isEdit ? 'Editar Carro' : 'Adicionar Carro';
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isEdit) {
         initFields();
       }

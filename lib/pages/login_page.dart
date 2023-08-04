@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobcar/core/database.dart';
-import 'package:mobcar/core/login_bloc.dart';
-import 'package:mobcar/pages/car_list_page.dart';
-import 'package:mobcar/widgets/login_input_field.dart';
+
+import '../core/database.dart';
+import '../core/login_bloc.dart';
+import '../widgets/login_input_field.dart';
+import 'car_list_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -21,12 +22,13 @@ class _LoginPageState extends State<LoginPage> {
 
     _loginBloc.stateOutput.listen(
       (state) async {
-        print(state);
+        debugPrint(state.toString());
         switch (state) {
           case LoginState.SUCCESS:
             await Database.setCarList();
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const CarListPage()));
+              MaterialPageRoute(builder: (context) => const CarListPage()),
+            );
             break;
           case LoginState.FAIL:
             showDialog(
