@@ -1,13 +1,13 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../core/entities/car_brand_entity.dart';
-import '../../../../core/entities/car_fipe_entity.dart';
-import '../../../../core/entities/car_model_entity.dart';
-import '../../../../core/entities/car_year_entity.dart';
-import '../../../terminals/interfaces/i_fipe_terminal.dart';
-import '../interfaces/i_fipe_service.dart';
+import '../../../core/entities/car_brand_entity.dart';
+import '../../../core/entities/car_fipe_entity.dart';
+import '../../../core/entities/car_model_entity.dart';
+import '../../../core/entities/car_year_entity.dart';
+import '../../terminals/interfaces/i_fipe_terminal.dart';
+import '../interfaces/i_fipe_station.dart';
 
-class FipeRestService implements IFipeService {
+class FipeRestStation implements IFipeStation {
   final _terminal = Modular.get<IFipeTerminal>();
 
   @override

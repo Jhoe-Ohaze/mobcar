@@ -9,22 +9,22 @@ import '../../core/usecases/get_car_models_usecase.dart';
 import '../../core/usecases/get_car_years_usecase.dart';
 import '../../presenter/pages/car_item_page.dart';
 import '../../presenter/pages/car_list_page.dart';
-import '../../services/adapters/services/implementations/fipe_rest_service.dart';
-import '../../services/adapters/services/implementations/hive_storage_service.dart';
-import '../../services/adapters/services/interfaces/i_fipe_service.dart';
-import '../../services/adapters/services/interfaces/i_storage_service.dart';
-import '../../services/terminals/implementations/fipe_rest_terminal.dart';
-import '../../services/terminals/implementations/hive_storage_terminal.dart';
-import '../../services/terminals/interfaces/i_fipe_terminal.dart';
-import '../../services/terminals/interfaces/i_storage_terminal.dart';
+import '../../service/stations/implementations/fipe_rest_station.dart';
+import '../../service/stations/implementations/hive_storage_station.dart';
+import '../../service/stations/interfaces/i_fipe_station.dart';
+import '../../service/stations/interfaces/i_storage_station.dart';
+import '../../service/terminals/implementations/fipe_rest_terminal.dart';
+import '../../service/terminals/implementations/hive_storage_terminal.dart';
+import '../../service/terminals/interfaces/i_fipe_terminal.dart';
+import '../../service/terminals/interfaces/i_storage_terminal.dart';
 
 class MainModule extends Module {
   @override
   void binds(Injector i) {
     i.add<IFipeTerminal>(() => FipeRestTerminal());
     i.add<IStorageTerminal>(() => HiveStorageTerminal());
-    i.add<IFipeService>(() => FipeRestService());
-    i.add<IStorageService>(() => HiveStorageService());
+    i.add<IFipeStation>(() => FipeRestStation());
+    i.add<IStorageStation>(() => HiveStorageStation());
     i.add<GetCarBrandsUsecase>(() => GetCarBrandsUsecase());
     i.add<GetCarModelsUsecase>(() => GetCarModelsUsecase());
     i.add<GetCarYearsUsecase>(() => GetCarYearsUsecase());

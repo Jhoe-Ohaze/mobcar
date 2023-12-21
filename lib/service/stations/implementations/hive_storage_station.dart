@@ -1,11 +1,11 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../../../core/entities/car_fipe_entity.dart';
-import '../../../terminals/interfaces/i_storage_terminal.dart';
+import '../../../core/entities/car_fipe_entity.dart';
+import '../../terminals/interfaces/i_storage_terminal.dart';
 import '../../mappers/implementations/car_fipe_mapper.dart';
-import '../interfaces/i_storage_service.dart';
+import '../interfaces/i_storage_station.dart';
 
-class HiveStorageService implements IStorageService {
+class HiveStorageStation implements IStorageStation {
   final _terminal = Modular.get<IStorageTerminal>();
 
   @override

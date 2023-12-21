@@ -1,7 +1,7 @@
-import '../../../../core/utils/datamap_typedef.dart';
+import '../../../core/utils/datamap_typedef.dart';
 import 'car_model_mapper.dart';
 
-import '../../../../core/entities/car_year_entity.dart';
+import '../../../core/entities/car_year_entity.dart';
 import '../interfaces/entity_mapper.dart';
 
 class CarYearMapper extends EntityMapper<CarYearEntity> {

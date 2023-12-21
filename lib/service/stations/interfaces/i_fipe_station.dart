@@ -1,9 +1,9 @@
-import '../../../../core/entities/car_brand_entity.dart';
-import '../../../../core/entities/car_fipe_entity.dart';
-import '../../../../core/entities/car_model_entity.dart';
-import '../../../../core/entities/car_year_entity.dart';
+import '../../../core/entities/car_brand_entity.dart';
+import '../../../core/entities/car_fipe_entity.dart';
+import '../../../core/entities/car_model_entity.dart';
+import '../../../core/entities/car_year_entity.dart';
 
-abstract interface class IFipeService {
+abstract interface class IFipeStation {
   Future<Iterable<CarBrandEntity>> getCarBrands();
 
   Future<Iterable<CarModelEntity>> getCarModels({

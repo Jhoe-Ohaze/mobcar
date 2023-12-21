@@ -7,10 +7,10 @@ import '../../../core/entities/car_fipe_entity.dart';
 import '../../../core/entities/car_model_entity.dart';
 import '../../../core/entities/car_year_entity.dart';
 import '../../../core/utils/datamap_typedef.dart';
-import '../../adapters/mappers/implementations/car_brand_mapper.dart';
-import '../../adapters/mappers/implementations/car_fipe_mapper.dart';
-import '../../adapters/mappers/implementations/car_model_mapper.dart';
-import '../../adapters/mappers/implementations/car_year_mapper.dart';
+import '../../mappers/implementations/car_brand_mapper.dart';
+import '../../mappers/implementations/car_fipe_mapper.dart';
+import '../../mappers/implementations/car_model_mapper.dart';
+import '../../mappers/implementations/car_year_mapper.dart';
 import '../interfaces/i_fipe_terminal.dart';
 
 class FipeRestTerminal implements IFipeTerminal {

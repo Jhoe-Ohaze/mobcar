@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import '../../../../core/entities/car_fipe_entity.dart';
-import '../../../../core/utils/datamap_typedef.dart';
+import '../../../core/entities/car_fipe_entity.dart';
+import '../../../core/utils/datamap_typedef.dart';
 import '../interfaces/entity_mapper.dart';
 import 'car_year_mapper.dart';
 
