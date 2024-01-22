@@ -8,8 +8,6 @@ import 'presenter/pages/main_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  final _openBox = await Hive.openBox<String>('cars');
-  await _openBox.clear();
 
   runApp(
     ModularApp(
