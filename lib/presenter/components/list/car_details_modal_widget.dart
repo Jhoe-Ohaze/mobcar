@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mobcar/core/entities/car_fipe_entity.dart';
+
+import '../../../core/entities/car_fipe_entity.dart';
 
 class CarDetailsModalWidget extends StatelessWidget {
   final CarFipeEntity car;
+  final VoidCallback editCallback;
 
   const CarDetailsModalWidget({
     required this.car,
+    required this.editCallback,
     super.key,
   });
 
@@ -70,9 +73,7 @@ class CarDetailsModalWidget extends StatelessWidget {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () async {
-                  //TODO: push to edit page
-                },
+                onPressed: editCallback,
                 icon: const Icon(
                   Icons.edit,
                   color: Colors.blue,

@@ -33,11 +33,11 @@ class _CarListPageState extends State<CarListPage>
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        onPressed: smac.onFabPressed,
         child: const Icon(
           Icons.add,
           color: Colors.blue,
         ),
-        onPressed: smac.onFabPressed,
       ),
       body: ValueListenableBuilder<Iterable<CarFipeEntity>>(
         valueListenable: smac.savedCarsNotifier,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mobcar/core/usecases/load_cars_usecase.dart';
 import 'package:smac_dart/core/presenter/async_smac.dart';
 import 'package:smac_dart/core/presenter/smac.dart';
 
 import '../../core/entities/car_fipe_entity.dart';
+import '../../core/usecases/load_cars_usecase.dart';
+import '../../infra/arguments/car_item_args.dart';
 import '../components/list/car_details_modal_widget.dart';
 
 class CarListPageController extends Smac {
@@ -30,10 +31,18 @@ class CarListPageController extends Smac {
     });
   }
 
-  void onFabPressed() async {
-    final refresh = await Modular.to.pushNamed<bool?>('/form');
+  void onFabPressed({CarFipeEntity? car}) async {
+    final refresh = await Modular.to.pushNamed<bool?>(
+      '/form',
+      arguments: CarItemArgs(car: car),
+    );
+
     if (refresh == true) {
       getCarList();
+    }
+
+    if (car != null) {
+      Modular.to.pop();
     }
   }
 
@@ -46,6 +55,7 @@ class CarListPageController extends Smac {
       builder: (context) {
         return CarDetailsModalWidget(
           car: car,
+          editCallback: () => onFabPressed(car: car),
         );
       },
     );

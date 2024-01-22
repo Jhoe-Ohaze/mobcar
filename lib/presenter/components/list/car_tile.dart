@@ -76,7 +76,7 @@ class CarTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: Colors.blue.shade700),
             ),
-            subtitle: Text(car.year.name + '\n' + car.brand.name),
+            subtitle: Text('${car.year.name}\n${car.brand.name}'),
             onTap: onTap,
           ),
         ),

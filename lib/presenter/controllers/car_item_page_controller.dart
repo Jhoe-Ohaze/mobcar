@@ -2,18 +2,18 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mobcar/core/usecases/edit_car_usecase.dart';
-import 'package:mobcar/core/usecases/save_car_usecase.dart';
 import 'package:smac_dart/smac.dart';
 
 import '../../core/entities/car_brand_entity.dart';
 import '../../core/entities/car_fipe_entity.dart';
 import '../../core/entities/car_model_entity.dart';
 import '../../core/entities/car_year_entity.dart';
+import '../../core/usecases/edit_car_usecase.dart';
 import '../../core/usecases/get_car_brands_usecase.dart';
 import '../../core/usecases/get_car_fipe_usecase.dart';
 import '../../core/usecases/get_car_models_usecase.dart';
 import '../../core/usecases/get_car_years_usecase.dart';
+import '../../core/usecases/save_car_usecase.dart';
 import '../../infra/arguments/car_item_args.dart';
 import '../components/item/submit_modal.dart';
 
@@ -25,6 +25,7 @@ class CarItemPageController extends Smac {
   final brandFieldKey = GlobalKey<FormFieldState<CarBrandEntity>>();
   final modelsFieldKey = GlobalKey<FormFieldState<CarModelEntity>>();
   final yearsFieldKey = GlobalKey<FormFieldState<CarYearEntity>>();
+  final asyncController = AsyncSmacController();
   final fipeController = TextEditingController();
   final imageNotifier = ValueNotifier<Uint8List?>(null);
   final busyNotifier = ValueNotifier<bool>(false);
@@ -49,7 +50,6 @@ class CarItemPageController extends Smac {
 
   bool get isEdit => _args?.car != null;
   String get title => isEdit ? 'Editar Carro' : 'Adicionar Carro';
-  String? get documentId => _args?.documentId;
   CarBrandEntity? get selectedBrand => _selectedBrand;
   CarModelEntity? get selectedModel => _selectedModel;
   CarYearEntity? get selectedYear => _selectedYear;
@@ -58,55 +58,71 @@ class CarItemPageController extends Smac {
   @override
   void onInitState(BuildContext context) async {
     _context = context;
-    _fipe = _args?.car;
-    imageNotifier.value = _args?.car?.image;
+    asyncController.triggerLoading();
     brandsIter = await getCarBrands();
-    notifyListeners();
+
+    if (_args != null) {
+      imageNotifier.value = _args?.car?.image;
+      await onBrandChange(_args!.car?.brand);
+      await onModelChange(_args!.car?.model);
+      await onYearChange(_args!.car?.year);
+      _fipe = _args!.car;
+    }
+    asyncController.triggerSuccess();
   }
 
-  void onBrandChange(CarBrandEntity? brand) async {
-    _selectedBrand = brand;
-    _selectedModel = null;
-    _selectedYear = null;
-    _fipe = null;
-    modelsIter = await getCarModels(brand: _selectedBrand!);
-    busyNotifier.value = false;
-    notifyListeners();
+  Future<void> onBrandChange(CarBrandEntity? brand) async {
+    if (brand != null) {
+      _selectedBrand = brand;
+      _selectedModel = null;
+      _selectedYear = null;
+      _fipe = null;
+      modelsIter = await getCarModels(brand: _selectedBrand!);
+      busyNotifier.value = false;
+      notifyListeners();
+    }
   }
 
-  void onModelChange(CarModelEntity? model) async {
-    _selectedModel = model;
-    _selectedYear = null;
-    _fipe = null;
-    yearsIter = await getCarYears(model: _selectedModel!);
-    busyNotifier.value = false;
-    notifyListeners();
+  Future<void> onModelChange(CarModelEntity? model) async {
+    if (model != null) {
+      _selectedModel = model;
+      _selectedYear = null;
+      _fipe = null;
+      yearsIter = await getCarYears(model: _selectedModel!);
+      busyNotifier.value = false;
+      notifyListeners();
+    }
   }
 
-  void onYearChange(CarYearEntity? year) async {
-    _selectedYear = year;
-    _fipe = await getFipe(year: _selectedYear!);
-    fipeController.text = _fipe!.fipe.toString();
-    busyNotifier.value = false;
-    notifyListeners();
+  Future<void> onYearChange(CarYearEntity? year) async {
+    if (year != null) {
+      _selectedYear = year;
+      _fipe = await getFipe(year: _selectedYear!);
+      _fipe = _fipe?.copyWith(id: () => _args?.car?.id);
+      fipeController.text = _fipe!.fipe.toString();
+      busyNotifier.value = false;
+      notifyListeners();
+    }
   }
 
   void submit() async {
-    showDialog(
-      context: _context,
-      builder: (firstContext) {
-        return SubmitModal(
-          onConfirm: () async {
-            busyNotifier.value = true;
-            if (isEdit) {
-              await editCar(_fipe!);
-            } else {
-              await saveCar(_fipe!);
-            }
-            Modular.to.pop<bool>(true);
-          },
-        );
-      },
-    );
+    if (_fipe != _args?.car) {
+      showDialog(
+        context: _context,
+        builder: (firstContext) {
+          return SubmitModal(
+            onConfirm: () async {
+              busyNotifier.value = true;
+              if (isEdit) {
+                await editCar(_fipe!);
+              } else {
+                await saveCar(_fipe!);
+              }
+              Modular.to.pop<bool>(true);
+            },
+          );
+        },
+      );
+    }
   }
 }
