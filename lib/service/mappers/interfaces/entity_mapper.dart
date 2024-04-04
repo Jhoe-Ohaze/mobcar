@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
-import '../../../core/utils/datamap_typedef.dart';
+import '../../../core/utils/typedefs.dart';
 
 abstract class EntityMapper<T extends Equatable> {
   T fromMap(DataMap map);

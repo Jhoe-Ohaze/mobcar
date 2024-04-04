@@ -1,6 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../../core/entities/car_fipe_entity.dart';
+import '../../../core/utils/typedefs.dart';
 import '../../terminals/interfaces/i_storage_terminal.dart';
 import '../../mappers/implementations/car_fipe_mapper.dart';
 import '../interfaces/i_storage_station.dart';
@@ -9,7 +10,7 @@ class HiveStorageStation implements IStorageStation {
   final _terminal = Modular.get<IStorageTerminal>();
 
   @override
-  Future<Iterable<CarFipeEntity>> loadCars() async {
+  AsyncIterable<CarFipeEntity> loadCars() async {
     final map = await _terminal.getCars();
     final list = <CarFipeEntity>[];
 

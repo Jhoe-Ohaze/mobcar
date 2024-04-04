@@ -1,4 +1,4 @@
-import '../../../core/utils/datamap_typedef.dart';
+import '../../../core/utils/typedefs.dart';
 import 'car_model_mapper.dart';
 
 import '../../../core/entities/car_year_entity.dart';

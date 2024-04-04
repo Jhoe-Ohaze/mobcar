@@ -6,7 +6,7 @@ import '../../../core/entities/car_brand_entity.dart';
 import '../../../core/entities/car_fipe_entity.dart';
 import '../../../core/entities/car_model_entity.dart';
 import '../../../core/entities/car_year_entity.dart';
-import '../../../core/utils/datamap_typedef.dart';
+import '../../../core/utils/typedefs.dart';
 import '../../mappers/implementations/car_brand_mapper.dart';
 import '../../mappers/implementations/car_fipe_mapper.dart';
 import '../../mappers/implementations/car_model_mapper.dart';
@@ -21,7 +21,7 @@ class FipeRestTerminal implements IFipeTerminal {
   }
 
   @override
-  Future<Iterable<CarBrandEntity>> getCarBrands() async {
+  AsyncIterable<CarBrandEntity> getCarBrands() async {
     final response = await get(Uri.parse(_baseURL));
     final iter = jsonDecode(response.body) as Iterable;
 
@@ -41,8 +41,9 @@ class FipeRestTerminal implements IFipeTerminal {
   }
 
   @override
-  Future<Iterable<CarModelEntity>> getCarModels(
-      {required CarBrandEntity brand}) async {
+  AsyncIterable<CarModelEntity> getCarModels(
+    CarBrandEntity brand,
+  ) async {
     final brandId = brand.id;
     final brandMap = {'brand': CarBrandMapper().toMap(brand)};
 
@@ -66,8 +67,9 @@ class FipeRestTerminal implements IFipeTerminal {
   }
 
   @override
-  Future<Iterable<CarYearEntity>> getCarYears(
-      {required CarModelEntity model}) async {
+  AsyncIterable<CarYearEntity> getCarYears(
+    CarModelEntity model,
+  ) async {
     final brandId = model.brand.id;
     final modelId = model.id;
     final modelMap = {'model': CarModelMapper().toMap(model)};
@@ -93,7 +95,9 @@ class FipeRestTerminal implements IFipeTerminal {
   }
 
   @override
-  Future<CarFipeEntity> getCarFipe({required CarYearEntity year}) async {
+  Future<CarFipeEntity> getCarFipe(
+    CarYearEntity year,
+  ) async {
     final brandId = year.model.brand.id;
     final modelId = year.model.id;
     final yearId = year.id;

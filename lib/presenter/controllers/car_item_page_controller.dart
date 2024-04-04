@@ -77,7 +77,7 @@ class CarItemPageController extends Smac {
       _selectedModel = null;
       _selectedYear = null;
       _fipe = null;
-      modelsIter = await getCarModels(brand: _selectedBrand!);
+      modelsIter = await getCarModels(_selectedBrand!);
       busyNotifier.value = false;
       notifyListeners();
     }
@@ -88,7 +88,7 @@ class CarItemPageController extends Smac {
       _selectedModel = model;
       _selectedYear = null;
       _fipe = null;
-      yearsIter = await getCarYears(model: _selectedModel!);
+      yearsIter = await getCarYears(_selectedModel!);
       busyNotifier.value = false;
       notifyListeners();
     }
@@ -97,7 +97,7 @@ class CarItemPageController extends Smac {
   Future<void> onYearChange(CarYearEntity? year) async {
     if (year != null) {
       _selectedYear = year;
-      _fipe = await getFipe(year: _selectedYear!);
+      _fipe = await getFipe(_selectedYear!);
       _fipe = _fipe?.copyWith(id: () => _args?.car?.id);
       fipeController.text = _fipe!.fipe.toString();
       busyNotifier.value = false;

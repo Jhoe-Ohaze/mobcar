@@ -2,19 +2,14 @@ import '../../../core/entities/car_brand_entity.dart';
 import '../../../core/entities/car_fipe_entity.dart';
 import '../../../core/entities/car_model_entity.dart';
 import '../../../core/entities/car_year_entity.dart';
+import '../../../core/utils/typedefs.dart';
 
 abstract interface class IFipeStation {
-  Future<Iterable<CarBrandEntity>> getCarBrands();
+  AsyncIterable<CarBrandEntity> getCarBrands();
 
-  Future<Iterable<CarModelEntity>> getCarModels({
-    required CarBrandEntity brand,
-  });
+  AsyncIterable<CarModelEntity> getCarModels(CarBrandEntity brand);
 
-  Future<Iterable<CarYearEntity>> getCarYears({
-    required CarModelEntity model,
-  });
+  AsyncIterable<CarYearEntity> getCarYears(CarModelEntity model);
 
-  Future<CarFipeEntity> getCarFipe({
-    required CarYearEntity year,
-  });
+  Future<CarFipeEntity> getCarFipe(CarYearEntity year);
 }

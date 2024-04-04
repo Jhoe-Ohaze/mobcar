@@ -7,9 +7,7 @@ import '../entities/car_year_entity.dart';
 class GetCarFipeUsecase {
   final _fipeService = Modular.get<IFipeStation>();
 
-  Future<CarFipeEntity> call({required CarYearEntity year}) async {
-    return await _fipeService.getCarFipe(
-      year: year,
-    );
+  Future<CarFipeEntity> call(CarYearEntity year) async {
+    return await _fipeService.getCarFipe(year);
   }
 }
