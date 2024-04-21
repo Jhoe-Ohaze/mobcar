@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../../../core/entities/car_fipe_entity.dart';
@@ -10,11 +11,20 @@ class CarFipeMapper extends EntityMapper<CarFipeEntity> {
 
   @override
   CarFipeEntity fromMap(DataMap map) {
+    final imageString = map['image'];
+    Uint8List? image;
+
+    if (imageString is String) {
+      final list = jsonDecode(imageString) as List;
+      final intIter = list.map<int>((e) => e);
+      image = Uint8List.fromList(intIter.toList());
+    }
+
     return CarFipeEntity(
       id: map['id'],
       code: map['codeFipe'],
       fipe: map['price'],
-      image: map['image'] != null ? Uint8List.fromList(map['image']) : null,
+      image: image,
       year: _yearMapper.fromMap(map['year']),
     );
   }

@@ -13,6 +13,7 @@ class MainPage extends StatelessWidget {
       title: 'MOBCAR',
       routerConfig: Modular.routerConfig,
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: CustomColors.primaryBlack,
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),

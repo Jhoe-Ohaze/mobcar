@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:smac_dart/smac.dart';
 
 import '../../core/entities/car_brand_entity.dart';
@@ -22,10 +23,10 @@ class CarItemPageController extends Smac {
 
   final CarItemArgs? _args = Modular.args.data;
 
+  final asyncSmac = AsyncSmac();
   final brandFieldKey = GlobalKey<FormFieldState<CarBrandEntity>>();
   final modelsFieldKey = GlobalKey<FormFieldState<CarModelEntity>>();
   final yearsFieldKey = GlobalKey<FormFieldState<CarYearEntity>>();
-  final asyncController = AsyncSmacController();
   final fipeController = TextEditingController();
   final imageNotifier = ValueNotifier<Uint8List?>(null);
   final busyNotifier = ValueNotifier<bool>(false);
@@ -55,10 +56,9 @@ class CarItemPageController extends Smac {
   CarYearEntity? get selectedYear => _selectedYear;
   CarFipeEntity? get fipe => _fipe;
 
-  @override
   void onInitState(BuildContext context) async {
     _context = context;
-    asyncController.triggerLoading();
+    asyncSmac.triggerLoading();
     brandsIter = await getCarBrands();
 
     if (_args != null) {
@@ -68,7 +68,20 @@ class CarItemPageController extends Smac {
       await onYearChange(_args!.car?.year);
       _fipe = _args!.car;
     }
-    asyncController.triggerSuccess();
+    asyncSmac.triggerSuccess();
+  }
+
+  void pickImage() async {
+    final picker = ImagePicker();
+
+    final file = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (file is XFile) {
+      final image = await file.readAsBytes();
+      imageNotifier.value = image;
+    }
   }
 
   Future<void> onBrandChange(CarBrandEntity? brand) async {
@@ -107,6 +120,12 @@ class CarItemPageController extends Smac {
 
   void submit() async {
     if (_fipe != _args?.car) {
+      if (imageNotifier.value != null) {
+        _fipe = _fipe!.copyWith(
+          image: () => imageNotifier.value,
+        );
+      }
+
       showDialog(
         context: _context,
         builder: (firstContext) {
