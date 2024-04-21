@@ -22,6 +22,12 @@ class _CarItemPageState extends State<CarItemPage>
   CarItemPageController createSmac() => CarItemPageController();
 
   @override
+  void initState() {
+    super.initState();
+    smac.onInitState(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +37,7 @@ class _CarItemPageState extends State<CarItemPage>
       body: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
         child: AsyncSmacBuilder(
-          controller: smac.asyncController,
+          asyncSmac: smac.asyncSmac,
           successBuilder: (context) {
             return ValueListenableBuilder<bool>(
               valueListenable: smac.busyNotifier,
@@ -49,7 +55,7 @@ class _CarItemPageState extends State<CarItemPage>
                           builder: (context, image, child) {
                             return ImageFrame(
                               image: image,
-                              onTap: busy ? null : () {},
+                              onTap: busy ? null : smac.pickImage,
                             );
                           },
                         ),
@@ -65,7 +71,8 @@ class _CarItemPageState extends State<CarItemPage>
                               (brand) => DropdownMenuItem<CarBrandEntity>(
                                 value: brand,
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
                                   child: Text(
                                     brand.name,
                                     overflow: TextOverflow.ellipsis,
@@ -87,7 +94,8 @@ class _CarItemPageState extends State<CarItemPage>
                               (model) => DropdownMenuItem<CarModelEntity>(
                                 value: model,
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
                                   child: Text(
                                     model.name,
                                     overflow: TextOverflow.ellipsis,
@@ -109,7 +117,8 @@ class _CarItemPageState extends State<CarItemPage>
                               (year) => DropdownMenuItem<CarYearEntity>(
                                 value: year,
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
                                   child: Text(
                                     year.name,
                                     overflow: TextOverflow.ellipsis,
@@ -163,7 +172,7 @@ class _CarItemPageState extends State<CarItemPage>
                 );
               },
             );
-          }
+          },
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobcar/core/usecases/delete_car_usecase.dart';
 import 'package:mobcar/core/usecases/edit_car_usecase.dart';
 import 'package:mobcar/core/usecases/load_cars_usecase.dart';
 import 'package:mobcar/core/usecases/save_car_usecase.dart';
@@ -32,6 +33,7 @@ class MainModule extends Module {
     i.add<EditCarUsecase>(() => EditCarUsecase());
     i.add<LoadCarsUsecase>(() => LoadCarsUsecase());
     i.add<SaveCarUsecase>(() => SaveCarUsecase());
+    i.add<DeleteCarUsecase>(() => DeleteCarUsecase());
   }
 
   @override

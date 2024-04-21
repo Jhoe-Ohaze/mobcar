@@ -4,34 +4,48 @@ import 'package:smac_dart/core/presenter/async_smac.dart';
 import 'package:smac_dart/core/presenter/smac.dart';
 
 import '../../core/entities/car_fipe_entity.dart';
+import '../../core/usecases/delete_car_usecase.dart';
 import '../../core/usecases/load_cars_usecase.dart';
 import '../../infra/arguments/car_item_args.dart';
 import '../components/list/car_details_modal_widget.dart';
 
 class CarListPageController extends Smac {
-  final loadCars = Modular.get<LoadCarsUsecase>();
+  final _loadCars = Modular.get<LoadCarsUsecase>();
+  final _deleteCar = Modular.get<DeleteCarUsecase>();
 
   final manufacturerFieldKey = GlobalKey<FormFieldState>();
   final modelFieldKey = GlobalKey<FormFieldState>();
   final yearFieldKey = GlobalKey<FormFieldState>();
   final fipeController = TextEditingController();
 
-  final asyncController = AsyncSmacController();
+  final asyncSmac = AsyncSmac();
   final savedCarsNotifier = ValueNotifier<Iterable<CarFipeEntity>>([]);
 
-  @override
   void onInitState(BuildContext context) {
-    super.onInitState(context);
     getCarList();
   }
 
-  Future<void> getCarList() async {
-    asyncController.waitFor(() async {
-      savedCarsNotifier.value = await loadCars();
+  void getCarList() async {
+    asyncSmac.waitFor(() async {
+      savedCarsNotifier.value = await _loadCars().then(
+        (value) => value.toList(),
+      );
     });
   }
 
+  void deleteCar(int id) async {
+    await _deleteCar(id);
+    final cars = [...savedCarsNotifier.value];
+    cars.removeWhere((car) => car.id == id);
+
+    savedCarsNotifier.value = cars;
+  }
+
   void onFabPressed({CarFipeEntity? car}) async {
+    if (car is CarFipeEntity) {
+      Modular.to.pop();
+    }
+
     final refresh = await Modular.to.pushNamed<bool?>(
       '/form',
       arguments: CarItemArgs(car: car),
@@ -39,10 +53,6 @@ class CarListPageController extends Smac {
 
     if (refresh == true) {
       getCarList();
-    }
-
-    if (car != null) {
-      Modular.to.pop();
     }
   }
 

@@ -34,4 +34,9 @@ class HiveStorageStation implements IStorageStation {
     final map = CarFipeMapper().toJson(car);
     await _terminal.editCar(car.id!, map);
   }
+
+  @override
+  Future<void> deleteCar(int id) async {
+    await _terminal.deleteCar(id);
+  }
 }

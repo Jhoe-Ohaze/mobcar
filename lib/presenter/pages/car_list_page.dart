@@ -19,6 +19,12 @@ class _CarListPageState extends State<CarListPage>
   CarListPageController createSmac() => CarListPageController();
 
   @override
+  void initState() {
+    super.initState();
+    smac.onInitState(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AppDrawer(),
@@ -51,7 +57,7 @@ class _CarListPageState extends State<CarListPage>
               itemBuilder: (context, index) {
                 return CarTile(
                   car: savedCars.elementAt(index),
-                  onDismiss: smac.getCarList,
+                  onDismiss: () => smac.deleteCar(index),
                   onTap: () => smac.showDetailsModal(
                     context: context,
                     car: savedCars.elementAt(index),

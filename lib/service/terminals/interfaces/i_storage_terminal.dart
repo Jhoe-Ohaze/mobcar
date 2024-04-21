@@ -3,4 +3,5 @@ abstract interface class IStorageTerminal {
 
   Future<void> saveCar(String car);
   Future<void> editCar(int id, String car);
+  Future<void> deleteCar(int id);
 }

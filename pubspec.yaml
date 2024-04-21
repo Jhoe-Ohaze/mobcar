@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   cupertino_icons: 
   flutter_modular: 
   image_picker:
@@ -24,8 +23,6 @@ dependencies:
     git:
       url: https://github.com/Jhoe-Ohaze/smac_dart.git
       ref: main
-  test: 
-  rxdart: 
 
 dev_dependencies:
   flutter_test:

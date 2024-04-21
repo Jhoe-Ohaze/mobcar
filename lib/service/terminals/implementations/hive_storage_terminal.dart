@@ -23,4 +23,10 @@ class HiveStorageTerminal implements IStorageTerminal {
     final box = await _openBox;
     await box.putAt(id, car);
   }
+
+  @override
+  Future<void> deleteCar(int id) async {
+    final box = await _openBox;
+    await box.delete(id);
+  }
 }
